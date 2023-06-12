@@ -1,17 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import mongoose from "mongoose";
+import app from "./App";
+import config from "./confg";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+( async() => {
+  try {
+    await mongoose.connect(config.MONGODB_URL);
+    console.log("BD CONNECTED !");
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    app.on('error', (err) =>{
+      console.error("EROR: ", err);
+      throw err
+    })
+    
+const onListening =() =>{
+  console.log(`Listening on port  ${config.PORT}`);
+}
+
+app.listen(config.PORT, onListening)
+
+  } catch (err) {
+    console.error("ERROR:",err)
+    throw err
+  }
+})()
